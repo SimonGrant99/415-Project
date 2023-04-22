@@ -27,6 +27,7 @@ run().catch(console.dir);
 //Start of Endpoints
 const app = express()
 app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const tickets = [{
         id: 1,
