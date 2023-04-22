@@ -63,6 +63,7 @@ app.get('/rest/ticket/:id', function(req, res) {
 
 app.post('/rest/ticket', function(req, res) {
     const ticket = req.body
+    console.log(req.body)
     ticket.id = tickets.length + 1
     tickets.push(ticket)
     res.json(ticket)
