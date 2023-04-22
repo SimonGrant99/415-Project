@@ -1,0 +1,23 @@
+{
+  "name": "415-project",
+  "version": "1.0.0",
+  "description": "415 Render Project",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SimonGrant99/415-Project.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SimonGrant99/415-Project/issues"
+  },
+  "homepage": "https://github.com/SimonGrant99/415-Project#readme",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2"
+  }
+}
