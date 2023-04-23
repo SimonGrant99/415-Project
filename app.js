@@ -13,6 +13,7 @@ client.connect((err) => {
 	console.log("Connected to MongoDB")
 
 	const db = client.db("my-database")
+    app.use(bodyParser.urlencoded({ extended: true }));
 
 	app.get("/rest/list", function (req, res) {
 		db
