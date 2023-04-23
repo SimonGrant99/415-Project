@@ -24,6 +24,8 @@ async function run() {
 }
 run().catch(console.dir);
 
+const db = client.db('415-Project')
+
 //Start of Endpoints
 const app = express()
 app.use(bodyParser.json())
