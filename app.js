@@ -1,28 +1,21 @@
+const mongodb = require('mongodb')
 const express = require('express')
+const app = express()
 const bodyParser = require('body-parser')
 
-//Pre-Baked Code to Confirm Connection to MongoDB
-const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = "mongodb+srv://admin:415project@415-project.qf5zcil.mongodb.net/?retryWrites=true&w=majority";
+const MongoClient = mongodb.MongoClient
+const uri = 'mongodb+srv://admin:415project@415-project.qf5zcil.mongodb.net/?retryWrites=true&w=majority'
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true })
 
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  }
-});
+app.use(bodyParser.json())
 
-async function run() {
-  try {
-    await client.connect();
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
-  } finally {
-    await client.close();
+client.connect((err) => {
+  if (err) {
+    console.error(err)
+    return
   }
-}
-run().catch(console.dir);
+
+  console.log('Connected to MongoDB')
 
 const db = client.db('415-Project')
 
@@ -141,4 +134,5 @@ app.get('/newticket', function(req, res) {
 const port = 3000
 app.listen(port, function() {
     console.log(`Server started on port ${port}`)
+})
 })
