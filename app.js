@@ -47,59 +47,93 @@ const tickets = [{
 ]
 
 app.get('/rest/list', function(req, res) {
-    res.json(tickets)
+    db.collection('tickets').find().toArray((err, docs) => {
+        if (err) {
+          console.error(err)
+          res.status(500).send('Error retrieving tickets')
+          return
+        }
+        res.send(docs)
+    })
 })
 
 app.get('/rest/ticket/:id', function(req, res) {
-    const id = parseInt(req.params.id)
-    const ticket = tickets.find(function(t) {
-        return t.id === id
+    const id = req.params.id
+    db.collection('tickets').findOne({ _id: new mongodb.ObjectId(id) }, (err, doc) => {
+        if (err) {
+          console.error(err)
+          res.status(500).send('Error retrieving ticket')
+          return
+        }
+        if (!doc) {
+          res.status(404).send('Ticket not found')
+          return
+        }
+        res.send(doc)
     })
-    if (!ticket) {
-        res.status(404).send('Ticket not found')
-    } else {
-        res.json(ticket)
-    }
 })
 
 app.post('/rest/ticket', function(req, res) {
     const ticket = req.body
-    console.log(req.body)
-    ticket.id = tickets.length + 1
-    tickets.push(ticket)
-    res.json(ticket)
+    db.collection('tickets').insertOne(ticket, (err, result) => {
+      if (err) {
+        console.error(err)
+        res.status(500).send('Error creating ticket')
+        return
+      }
+      res.send(result.ops[0])
+    })
 })
 
 app.delete('/rest/ticket/:id', function(req, res) {
-    const id = parseInt(req.params.id)
-    const index = tickets.findIndex(function(t) {
-        return t.id === id
-    })
-    if (index === -1) {
+    const id = req.params.id
+    db.collection('tickets').deleteOne({ _id: new mongodb.ObjectId(id) }, (err, result) => {
+      if (err) {
+        console.error(err)
+        res.status(500).send('Error deleting ticket')
+        return
+      }
+      if (result.deletedCount === 0) {
         res.status(404).send('Ticket not found')
-    } else {
-        tickets.splice(index, 1)
-        res.sendStatus(204)
-    }
+        return
+      }
+      res.sendStatus(204)
+    })
 })
 
 app.put('/rest/ticket/:id', function(req, res) {
-    const id = parseInt(req.params.id)
-    const index = tickets.findIndex(function(t) {
-        return t.id === id
-    })
-    if (index === -1) {
+    const id = req.params.id
+    const updates = req.body
+    db.collection('tickets').updateOne({ _id: new mongodb.ObjectId(id) }, { $set: updates }, (err, result) => {
+      if (err) {
+        console.error(err)
+        res.status(500).send('Error updating ticket')
+        return
+      }
+      if (result.modifiedCount === 0) {
         res.status(404).send('Ticket not found')
-    } else {
-        const updatedTicket = req.body
-        updatedTicket.id = id
-        tickets[index] = updatedTicket
-        res.json(updatedTicket)
-    }
+        return
+      }
+      db.collection('tickets').findOne({ _id: new mongodb.ObjectId(id) }, (err, doc) => {
+        if (err) {
+          console.error(err)
+          res.status(500).send('Error retrieving updated ticket')
+          return
+        }
+        res.send(doc)
+      })
+    })
 })
 
 app.get('/newticket', function(req, res) {
-    res.sendFile(__dirname + '/newticket.html')
+    db.collection('tickets').insertOne(ticket, (err, result) => {
+        if (err) {
+          console.error(err)
+          res.status(500).send('Error creating ticket')
+          return
+        }
+        res.sendFile(__dirname + '/newticket.html')
+    })
 })
 
 const port = 3000
