@@ -95,7 +95,7 @@ client.connect().then(() => {
     }
   })
 
-  app.post("/newticket", function (req, res) {
+  app.get("/newticket", function (req, res) {
     const ticket = req.body;
     db.collection("tickets").insertOne(ticket, function (err, result) {
       if (err) {
@@ -103,7 +103,6 @@ client.connect().then(() => {
         res.status(500).send("Error creating ticket");
         return;
       }
-      res.redirect("/");
     });
   });
 
