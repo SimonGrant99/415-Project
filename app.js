@@ -1,6 +1,9 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const mongodb = require('mongodb')
+const app = express();
 
+const MongoClient = mongodb.MongoClient
 const uri =
   "mongodb+srv://admin:415project@415-project.qf5zcil.mongodb.net/?retryWrites=true&w=majority";
 const client = new MongoClient(uri, {
@@ -15,7 +18,6 @@ client.connect((err) => {
   console.log("Connected to MongoDB");
 
   //Start of Endpoints
-  const app = express();
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
   const db = client.db("415-Project");
