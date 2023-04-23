@@ -1,18 +1,10 @@
-const mongodb = require("mongodb")
-const express = require("express")
-const app = express()
-const bodyParser = require("body-parser")
-
-const MongoClient = mongodb.MongoClient
+const MongoClient = require("mongodb").MongoClient
 const uri =
 	"mongodb+srv://admin:415project@415-project.qf5zcil.mongodb.net/?retryWrites=true&w=majority"
 const client = new MongoClient(uri, {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
 })
-
-app.use(bodyParser.json())
-
 client.connect((err) => {
 	if (err) {
 		console.error(err)
@@ -20,36 +12,13 @@ client.connect((err) => {
 	}
 	console.log("Connected to MongoDB")
 
-	const db = client.db("415-Project")
-
-	//Start of Endpoints
-	const app = express()
-	app.use(bodyParser.json())
-	app.use(bodyParser.urlencoded({ extended: true }))
-
-	const tickets = [
-		{
-			id: 1,
-			title: "Ticket 1",
-			description: "Description 1",
-		},
-		{
-			id: 2,
-			title: "Ticket 2",
-			description: "Description 2",
-		},
-		{
-			id: 3,
-			title: "Ticket 3",
-			description: "Description 3",
-		},
-	]
+	const db = client.db("my-database")
 
 	app.get("/rest/list", function (req, res) {
 		db
 			.collection("tickets")
 			.find()
-			.toArray((err, docs) => {
+			.toArray(function (err, docs) {
 				if (err) {
 					console.error(err)
 					res.status(500).send("Error retrieving tickets")
@@ -63,7 +32,7 @@ client.connect((err) => {
 		const id = req.params.id
 		db
 			.collection("tickets")
-			.findOne({ _id: new mongodb.ObjectId(id) }, (err, doc) => {
+			.findOne({ _id: new mongodb.ObjectId(id) }, function (err, doc) {
 				if (err) {
 					console.error(err)
 					res.status(500).send("Error retrieving ticket")
@@ -79,7 +48,7 @@ client.connect((err) => {
 
 	app.post("/rest/ticket", function (req, res) {
 		const ticket = req.body
-		db.collection("tickets").insertOne(ticket, (err, result) => {
+		db.collection("tickets").insertOne(ticket, function (err, result) {
 			if (err) {
 				console.error(err)
 				res.status(500).send("Error creating ticket")
@@ -93,7 +62,7 @@ client.connect((err) => {
 		const id = req.params.id
 		db
 			.collection("tickets")
-			.deleteOne({ _id: new mongodb.ObjectId(id) }, (err, result) => {
+			.deleteOne({ _id: new mongodb.ObjectId(id) }, function (err, result) {
 				if (err) {
 					console.error(err)
 					res.status(500).send("Error deleting ticket")
@@ -115,7 +84,7 @@ client.connect((err) => {
 			.updateOne(
 				{ _id: new mongodb.ObjectId(id) },
 				{ $set: updates },
-				(err, result) => {
+				function (err, result) {
 					if (err) {
 						console.error(err)
 						res.status(500).send("Error updating ticket")
@@ -127,7 +96,7 @@ client.connect((err) => {
 					}
 					db
 						.collection("tickets")
-						.findOne({ _id: new mongodb.ObjectId(id) }, (err, doc) => {
+						.findOne({ _id: new mongodb.ObjectId(id) }, function (err, doc) {
 							if (err) {
 								console.error(err)
 								res.status(500).send("Error retrieving updated ticket")
@@ -137,21 +106,5 @@ client.connect((err) => {
 						})
 				}
 			)
-	})
-
-	app.get("/newticket", function (req, res) {
-		db.collection("tickets").insertOne(ticket, (err, result) => {
-			if (err) {
-				console.error(err)
-				res.status(500).send("Error creating ticket")
-				return
-			}
-			res.sendFile(__dirname + "/newticket.html")
-		})
-	})
-
-	const port = 3000
-	app.listen(port, function () {
-		console.log(`Server started on port ${port}`)
 	})
 })
