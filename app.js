@@ -95,15 +95,9 @@ client.connect().then(() => {
     }
   })
 
-  app.get("/newticket", async (req, res) => {
-    try {
-      const result = await db.collection("tickets").insertOne(ticket)
-      res.sendFile(__dirname + "/newticket.html")
-    } catch (err) {
-      console.error(err)
-      res.status(500).send("Error creating ticket")
-    }
-  })
+  app.get("/newticket", function (req, res) {
+    res.sendFile(__dirname + "/newticket.html");
+  });
 
   const port = 3000
   app.listen(port, () => console.log(`Server started on port ${port}`))
