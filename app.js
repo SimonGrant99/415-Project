@@ -98,6 +98,18 @@ client.connect().then(() => {
   app.get("/newticket", function (req, res) {
     res.sendFile(__dirname + "/newticket.html");
   });
+  
+  app.post("/rest/newticket", function (req, res) {
+    const ticket = req.body;
+    db.collection("tickets").insertOne(ticket, function (err, result) {
+      if (err) {
+        console.error(err);
+        res.status(500).send("Error creating ticket");
+        return;
+      }
+      res.redirect("/rest/list");
+    });
+  });  
 
   const port = 3000
   app.listen(port, () => console.log(`Server started on port ${port}`))
